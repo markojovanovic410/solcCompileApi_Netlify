@@ -47,6 +47,12 @@ function solcCompile(data) {
 }
 
 app.use(bodyParser);
+app.get("/test", (req, res) => {
+    res.json("Test");
+})
+app.get("/", (req, res) => {
+    res.json("aaa");
+})
 app.post("/solc-compile", (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
