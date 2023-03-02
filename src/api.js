@@ -18,8 +18,13 @@ function solcCompile(data) {
   if (!data.code || data.code == "") {
     return { result: -1, error: "Need contract code!" };
   }
+  if (!data.mc || data.mc == "") {
+    return { result: -1, error: "Need main class!" };
+  }
+
   let eo = true;
   let oa = 200;
+  
   if (data.eo && data.eo == "false") eo = false;
   if (data.oa) oa = parseInt(data.oa);
   const input = {
@@ -44,11 +49,16 @@ function solcCompile(data) {
 
   const output = JSON.parse(solc.compile(JSON.stringify(input)));
   if (output.contracts) {
-    return {
-      result: 1,
-      abi: output.contracts.a.SimpleStorage.abi,
-      bytecode: output.contracts.a.SimpleStorage.evm.bytecode.object,
-    };
+    if(output.contracts.a[data.mc]){
+      return {
+        result: 1,
+        abi: output.contracts.a[data.mc].abi,
+        bytecode: output.contracts.a[data.mc].evm.bytecode.object,
+      };
+    }
+    else {
+      return { result: -1, error: "Incorrect main class!" };
+    }
   } else {
     return { result: 0, error: output.errors };
   }
